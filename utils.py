@@ -88,6 +88,17 @@ def plot_results(routes, waypoints, home, num_vehicles, filename):
     plt.savefig(filename)
     plt.close(1)
 
+
+def plot_complete_graph(x, y):
+    plt.figure(10)
+    for xx0, yy0 in zip(x, y):
+        plt.plot(xx0, yy0, 'bo')
+
+        for xx1, yy1 in zip(x, y):
+            plt.plot([xx0, xx1], [yy0, yy1], 'g:')
+    plt.show()
+    plt.close()
+
 def build_distance_matrix(samples, home):
     """Entry point of the program."""
     # Instantiate the data problem.
@@ -105,6 +116,7 @@ def build_distance_matrix(samples, home):
         waypoints.append(Waypoint(xx, yy, 50.0))
         waypoints_list.append([xx, yy])
 
+    plot_complete_graph(x, y)
 
     # waypoints.append(home)
 
