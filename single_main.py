@@ -11,13 +11,13 @@ from matplotlib import pyplot as plt
 
 home = Waypoint(0, 0, 50.0)
 
-TIME_LIMIT  = 1
+TIME_LIMIT = 1
 num_vehicles = 1
 samples = 20
 
 def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
-    print(f'Objective: {solution.ObjectiveValue()}')
+    # print(f'Objective: {solution.ObjectiveValue()}')
     routes = []
     max_route_distance = 0
     for vehicle_id in range(data['num_vehicles']):
@@ -36,7 +36,7 @@ def print_solution(data, manager, routing, solution):
             index = solution.Value(routing.NextVar(index))
             route_distance += routing.GetArcCostForVehicle(
                 previous_index, index, vehicle_id)
-            print('route distance', route_distance, previous_index, index)
+            # print('route distance', route_distance, previous_index, index)
         plan_output += '{}\n'.format(manager.IndexToNode(index))
 
         plan_output += 'Distance of the route: {}m\n'.format(route_distance)
@@ -61,11 +61,11 @@ def plot_results(routes, waypoints, home, num_vehicles):
         for route_index in routes[i]:
             x.append(waypoints[route_index].x)
             y.append(waypoints[route_index].y)
-            print(route_index)
-        x.append(home.x)
-        y.append(home.y)
+            # print(route_index)
+        # x.append(home.x)
+        # y.append(home.y)
         plt.plot(x, y)
-    plt.plot(0, 0, 'bx', markersize=10)
+    # plt.plot(0, 0, 'bx', markersize=10)
 
 
 
@@ -85,92 +85,101 @@ def main():
     x = np.random.rand(samples, 1) * 100 - 50
     np.random.seed(2)
     y = np.random.rand(samples, 1) * 100 - 50
+
     id = [0, 1,   2,  3, 4, 5, 6,   7, 8,  9, 10]
     # x = [10, -10, 10, 2, 5, 6, 7,   9, -6, 1]
     # y = [1,  -5,  2,  5, 5, 7, 10, -3, 4, -10]
 
     for xx, yy in zip(x, y):
+        # print(xx, yy)
         waypoints.append(Waypoint(xx, yy, 50.0))
-    home = Waypoint(0, 0, 50.0)
+    # home = Waypoint(0, 0, 50.0)
 
-    waypoints.append(home)
+    # waypoints.append(home)
 
     waypoints.sort()
+    for waypoint in waypoints:
+        print(waypoint.x, waypoint.y)
 
     # home_index = waypoints.index(home)
-    home_index = waypoints.index(home)
-    ends = [home_index for i in range(num_vehicles)]
+    # home_index = waypoints.index(home)
+    ends = [0 for i in range(num_vehicles)]
 
-    starts = []
-    # while len(starts) < num_vehicles:
-    #     candidate = np.random.choice()
-
-    print('ends', ends)
-
-    data = {'starts': [2], 'ends': ends, 'num_vehicles': num_vehicles}
-    num_points = len(waypoints)
-    distance_matrix = [[0 for i in range(num_points)] for j in range(num_points)]
-    for i in range(num_points):
-        waypoint_a_x = waypoints[i].x
-        waypoint_a_y = waypoints[i].y
-        waypoint_a_z = waypoints[i].z
-        for j in range(num_points):
-            waypoint_b_x = waypoints[j].x
-            waypoint_b_y = waypoints[j].y
-            waypoint_b_z = waypoints[j].z
-            dist = math.sqrt((waypoint_a_x - waypoint_b_x) ** 2 + (waypoint_a_y - waypoint_b_y) ** 2 )
-            distance_matrix[j][i] = dist
-    data['distance_matrix'] = distance_matrix
-    for line in data['distance_matrix']:
-        print(line)
-
-    # Create the routing index manager.
-    manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
-                                           data['num_vehicles'], data['starts'],
-                                           data['ends'])
-
-    # Create Routing Model.
-    routing = pywrapcp.RoutingModel(manager)
-
-
-    # Create and register a transit callback.
     def distance_callback(from_index, to_index):
         """Returns the distance between the two nodes."""
         # Convert from routing variable Index to distance matrix NodeIndex.
         from_node = manager.IndexToNode(from_index)
         to_node = manager.IndexToNode(to_index)
         return data['distance_matrix'][from_node][to_node]
+    # ends = [3]
+    # starts = [2]
+    for i in range(samples // 2):
+    # while len(starts) < num_vehicles:
+    #     candidate = np.random.choice()
+        ends = [i]
+        starts = [i + samples // 2]
 
-    transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+        print('ends', ends)
 
-    # Define cost of each arc.
-    routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
+        data = {'starts': starts, 'ends': ends, 'num_vehicles': num_vehicles}
+        num_points = len(waypoints)
+        distance_matrix = [[0 for i in range(num_points)] for j in range(num_points)]
+        for i in range(num_points):
+            waypoint_a_x = waypoints[i].x
+            waypoint_a_y = waypoints[i].y
+            waypoint_a_z = waypoints[i].z
+            for j in range(num_points):
+                waypoint_b_x = waypoints[j].x
+                waypoint_b_y = waypoints[j].y
+                waypoint_b_z = waypoints[j].z
+                dist = math.sqrt((waypoint_a_x - waypoint_b_x) ** 2 + (waypoint_a_y - waypoint_b_y) ** 2 )
+                distance_matrix[j][i] = dist
+        data['distance_matrix'] = distance_matrix
+        # for line in data['distance_matrix']:
+            # print(line)
 
-    # Add Distance constraint.
-    dimension_name = 'Distance'
-    routing.AddDimension(
-        transit_callback_index,
-        1,  # no slack
-        1000,  # vehicle maximum travel distance
-        True,  # start cumul to zero
-        dimension_name)
-    distance_dimension = routing.GetDimensionOrDie(dimension_name)
-    distance_dimension.SetGlobalSpanCostCoefficient(10)
+        # Create the routing index manager.
+        manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
+                                               data['num_vehicles'], data['starts'],
+                                               data['ends'])
 
-    search_parameters = pywrapcp.DefaultRoutingSearchParameters()
-    # https://developers.google.com/optimization/routing/routing_options#local_search_options
-    search_parameters.local_search_metaheuristic = (routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
-    search_parameters.time_limit.seconds = TIME_LIMIT
-    search_parameters.log_search = True
+        # Create Routing Model.
+        routing = pywrapcp.RoutingModel(manager)
 
-    # Solve the problem.
-    solution = routing.SolveWithParameters(search_parameters)
 
-    # Print solution on console.
-    if solution:
-        routes = print_solution(data, manager, routing, solution)
-        plot_results(routes, waypoints, home, num_vehicles)
-    return waypoints, waypoints_list, data
+        # Create and register a transit callback.
+
+
+        transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+
+        # Define cost of each arc.
+        routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
+
+        # Add Distance constraint.
+        dimension_name = 'Distance'
+        routing.AddDimension(
+            transit_callback_index,
+            1,  # no slack
+            1000,  # vehicle maximum travel distance
+            True,  # start cumul to zero
+            dimension_name)
+        distance_dimension = routing.GetDimensionOrDie(dimension_name)
+        distance_dimension.SetGlobalSpanCostCoefficient(10)
+
+        search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+        # https://developers.google.com/optimization/routing/routing_options#local_search_options
+        search_parameters.local_search_metaheuristic = (routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
+        search_parameters.time_limit.seconds = TIME_LIMIT
+        search_parameters.log_search = True
+
+        # Solve the problem.
+        solution = routing.SolveWithParameters(search_parameters)
+
+        # Print solution on console.
+        if solution:
+            routes = print_solution(data, manager, routing, solution)
+            plot_results(routes, waypoints, home, num_vehicles)
+    return waypoints, data
 
 
 if __name__ == '__main__':
