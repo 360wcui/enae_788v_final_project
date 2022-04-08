@@ -11,6 +11,7 @@ num_vehicles = 1
 samples = 20
 home = Waypoint(0, 0, 50)
 
+# iterate through all the starting and end points to find the best route that traverses all the nodes.
 if __name__ == '__main__':
     start = timeit.default_timer()
     distance_matrix, waypoints = build_distance_matrix(samples, home)

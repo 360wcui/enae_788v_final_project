@@ -54,15 +54,22 @@ def plot_results(routes, waypoints, home, num_vehicles):
         x.append(waypoint.x)
         y.append(waypoint.y)
     plt.plot(x, y, 'o')
+    first_x = None
+    first_y = None
     last_x = None
     last_y = None
     current_x = None
     current_y = None
     distance = 0
+
     for i in range(num_vehicles):
         x = []
         y = []
+        print(routes[i])
         for route_index in routes[i]:
+            if first_x is None:
+                first_x = waypoints[route_index].x
+                first_y = waypoints[route_index].y
             last_x = current_x
             last_y = current_y
             current_x = waypoints[route_index].x
@@ -85,7 +92,7 @@ def plot_results(routes, waypoints, home, num_vehicles):
         print("manually caluclated distance", distance)
     # plt.plot(0, 0, 'bx', markersize=10)
 
-
+    distance += np.sqrt((current_x - first_x) ** 2 + (current_y - first_y) ** 2)
 
     plt.show()
 
@@ -121,9 +128,9 @@ def main():
         to_node = manager.IndexToNode(to_index)
         return data['distance_matrix'][from_node][to_node]
 
-    for i in range(samples // 2):
+    for i in range(samples // 2 - 1):
         ends = [i]
-        starts = [i + samples // 2]
+        starts = [0]
 
         data = {'starts': starts, 'ends': ends, 'num_vehicles': num_vehicles}
         num_points = len(waypoints)
@@ -185,7 +192,7 @@ def main():
                 home = waypoints[home_index]
                 print(home_index, home)
 
-                best_route_distance = max_route_distance
+                best_route_distance =  max_route_distance
                 plot_results(routes, waypoints, home, num_vehicles)
         print('best_route_distance', best_route_distance)
 

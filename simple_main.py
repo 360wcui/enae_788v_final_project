@@ -67,7 +67,7 @@ def print_solution(data, manager, routing, solution):
     # print('Maximum of the route distances: {}m'.format(max_route_distance))
 
 
-
+# iterate through all the starting and end points to find the best route that traverses all the nodes.
 
 def main():
 
