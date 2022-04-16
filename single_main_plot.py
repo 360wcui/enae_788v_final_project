@@ -15,6 +15,11 @@ TIME_LIMIT = 1
 num_vehicles = 1
 samples = 20
 
+
+def print_ros_command(current_x, current_y):
+    command = 'ros2 topic pub /uav1/detection/localized/local vision_msgs/msg/Detection2DArray  "{detections: [{results: [{hypothesis: {class_id: "sway"}, pose: {pose: {position: {x: ' + str(current_x[0]) + ', y: ' + str(current_y[0]) + ', z: 20.0}, orientation: {x: 10.1, y: 10.1, z: 0.2, w: 1.0}}}}]}]}" -1'
+    print(command)
+
 def plot_results(routes, waypoints, home, num_vehicles):
     x = []
     y = []
@@ -42,11 +47,12 @@ def plot_results(routes, waypoints, home, num_vehicles):
             last_y = current_y
             current_x = waypoints[route_index].x
             current_y = waypoints[route_index].y
+            print_ros_command(current_x, current_y)
             if last_x is not None and last_y is not None:
                 # print('haha', last_x, last_y, current_x, current_y)
                 step = np.sqrt((current_x - last_x) ** 2 + (current_y - last_y) ** 2)
                 distance += step
-                print(distance, step)
+                # print(distance, step)
             x.append(waypoints[route_index].x)
             y.append(waypoints[route_index].y)
             # print(route_index)
@@ -111,17 +117,17 @@ def main():
             distance_matrix[j][i] = dist
     data['distance_matrix'] = distance_matrix
 
-    for line in distance_matrix:
-        print(line)
+    # for line in distance_matrix:
+    #     print(line)
 
     routes = [[0, 3, 12, 16, 19, 17, 15, 13, 9, 8, 11, 10, 14, 18, 6, 7, 5, 1, 2, 4, 0]] # held karp
-    routes = [[0, 3, 12, 13, 9, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 2, 5, 7, 6, 1, 0]] # christofides
+    # routes = [[0, 3, 12, 13, 9, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 2, 5, 7, 6, 1, 0]] # christofides
     # routes = [[0, 4, 2, 1, 5, 7, 6, 18, 14, 10, 11, 8, 9, 13, 15, 17, 19, 16, 12, 3, 0]] # prob
 
         # routes, max_route_distance = print_solution(data, manager, routing, solution)
     home_index = ends[0]
     home = waypoints[home_index]
-    print(home_index, home)
+    # print(home_index, home)
 
     plot_results(routes, waypoints, home, num_vehicles)
 
