@@ -83,6 +83,8 @@ def plot_results(routes, waypoints, home, num_vehicles, filename):
         # x.append(home_x)
         # y.append(home_y)
         plt.plot(x, y)
+        plt.xlabel('Position (unitless)')
+        plt.ylabel('Position (unitless)')
     # plt.plot(home_x, home_y, 'bx', markersize=10)
     # plt.show()
     plt.savefig(filename)
@@ -96,7 +98,10 @@ def plot_complete_graph(x, y):
 
         for xx1, yy1 in zip(x, y):
             plt.plot([xx0, xx1], [yy0, yy1], 'g:')
-    plt.show()
+    plt.xlabel('Position (unitless)')
+    plt.ylabel('Position (unitless)')
+    # plt.show()
+    plt.savefig('complete_graph.png')
     plt.close()
 
 def build_distance_matrix(samples, home):

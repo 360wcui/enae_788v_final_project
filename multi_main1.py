@@ -9,10 +9,7 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 
-TIME_LIMIT  = 1
-waypoints = []
-num_vehicles = 2
-samples = 20
+
 
 def print_solution(data, manager, routing, solution):
     """Prints solution on console."""
@@ -64,12 +61,12 @@ def plot_results(routes, waypoints, home, num_vehicles):
         x.append(home.x)
         y.append(home.y)
         plt.plot(x, y)
-
     plt.plot(0, 0, 'bx', markersize=10)
+    plt.xlabel('Position (unitless)')
+    plt.ylabel('Position (unitless)')
+    plt.savefig("multi-agent1.png")
 
-
-
-    plt.show()
+    # plt.show()
 
 
 
@@ -79,6 +76,10 @@ def main():
     # Instantiate the data problem.
     # data = create_data_model()
 
+    TIME_LIMIT  = 1
+    waypoints = []
+    num_vehicles = 2
+    samples = 20
     np.random.seed(1)
     x = np.random.rand(samples, 1) * 100 - 50
     np.random.seed(2)
@@ -89,22 +90,22 @@ def main():
 
     for xx, yy in zip(x, y):
         waypoints.append(Waypoint(xx, yy, 50.0))
-    # home = Waypoint(0, 0, 50.0)
+    home = Waypoint(0, 0, 50.0)
 
-    # waypoints.append(home)
+    waypoints.append(home)
 
     waypoints.sort()
 
-    # home_index = waypoints.index(home)
-    # ends = [home_index for i in range(num_vehicles)]
+    home_index = waypoints.index(home)
+    ends = [home_index for i in range(num_vehicles)]
 
     starts = []
     # while len(starts) < num_vehicles:
     #     candidate = np.random.choice()
 
-    # print('ends', ends)
+    print('ends', ends)
 
-    data = {'depot': 0, 'num_vehicles': num_vehicles}
+    data = {'starts': [0, 8], 'ends': ends, 'num_vehicles': num_vehicles}
     num_points = len(waypoints)
     distance_matrix = [[0 for i in range(num_points)] for j in range(num_points)]
     for i in range(num_points):
@@ -123,8 +124,8 @@ def main():
 
     # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(len(data['distance_matrix']),
-                                           data['num_vehicles'], data['depot'])
-
+                                           data['num_vehicles'], data['starts'],
+                                           data['ends'])
 
     # Create Routing Model.
     routing = pywrapcp.RoutingModel(manager)
@@ -166,7 +167,7 @@ def main():
     # Print solution on console.
     if solution:
         routes = print_solution(data, manager, routing, solution)
-        # plot_results(routes, waypoints, home, num_vehicles)
+        plot_results(routes, waypoints, home, num_vehicles)
 
 
 if __name__ == '__main__':

@@ -59,6 +59,8 @@ def plot_results(routes, waypoints, home, num_vehicles):
         # x.append(home.x)
         # y.append(home.y)
         plt.plot(x, y)
+        plt.xlabel('Position (unitless)')
+        plt.ylabel('Position (unitless)')
         # last_x = current_x
         # last_y = current_y
         # current_x = home.x
@@ -72,7 +74,7 @@ def plot_results(routes, waypoints, home, num_vehicles):
 
     distance += np.sqrt((current_x - first_x) ** 2 + (current_y - first_y) ** 2)
     print("manually caluclated distance", distance)
-    plt.savefig("result1.png")
+    plt.savefig("result3.png")
     plt.show()
 
 
@@ -122,7 +124,9 @@ def main():
 
     routes = [[0, 3, 12, 16, 19, 17, 15, 13, 9, 8, 11, 10, 14, 18, 6, 7, 5, 1, 2, 4, 0]] # held karp
     # routes = [[0, 3, 12, 13, 9, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 2, 5, 7, 6, 1, 0]] # christofides
+    # routes = [[0, 3, 12, 13, 9, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 2, 5, 7, 6, 1, 0]] # christofides
     # routes = [[0, 4, 2, 1, 5, 7, 6, 18, 14, 10, 11, 8, 9, 13, 15, 17, 19, 16, 12, 3, 0]] # prob
+    routes = [[0, 3, 12, 9, 13, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 5, 7, 6, 1,  2,0]]  # rl
 
         # routes, max_route_distance = print_solution(data, manager, routing, solution)
     home_index = ends[0]

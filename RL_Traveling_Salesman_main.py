@@ -41,12 +41,25 @@ device
 # In[4]:
 
 
-def get_graph_mat(n=10, size=1):
+def get_graph_mat(n=10, size=1, test=False):
     """ Throws n nodes uniformly at random on a square, and build a (fully connected) graph.
         Returns the (N, 2) coordinates matrix, and the (N, N) matrix containing pairwise euclidean distances.
     """
     coords = size * np.random.uniform(size=(n,2))
     dist_mat = distance_matrix(coords, coords)
+
+    if test:
+        samples = n
+        np.random.seed(1)
+        x = np.random.rand(samples, 1) * 100 - 50
+        np.random.seed(2)
+        y = np.random.rand(samples, 1) * 100 - 50
+        coords = np.zeros((n, 2))
+        coords[:, 0] = x[:, 0]
+        coords[:, 1] = y[:, 0]
+        dist_mat = distance_matrix(coords, coords)
+
+
     return coords, dist_mat
 
 def plot_graph(coords, mat):
@@ -329,15 +342,15 @@ def get_next_neighbor_random(state):
 SEED = 1  # A seed for the random number generator
 
 # Graph
-NR_NODES = 10  # Number of nodes N
+NR_NODES = 20  # Number of nodes N
 EMBEDDING_DIMENSIONS = 5  # Embedding dimension D
 EMBEDDING_ITERATIONS_T = 1  # Number of embedding iterations T
 
 # Learning
-NR_EPISODES = 4001
+NR_EPISODES = 3601
 MEMORY_CAPACITY = 10000
-N_STEP_QL = 2  # Number of steps (n) in n-step Q-learning to wait before computing target reward estimate
-BATCH_SIZE = 16
+N_STEP_QL = 4  # Number of steps (n) in n-step Q-learning to wait before computing target reward estimate
+BATCH_SIZE = 64
 
 GAMMA = 0.9
 INIT_LR = 5e-3
@@ -577,14 +590,14 @@ def plot_solution(coords, mat, solution):
     i, next_i = solution[-1], solution[0]
     plt.plot([coords[i, 0], coords[next_i, 0]], [coords[i, 1], coords[next_i, 1]], 'k', lw=2, alpha=0.8)
     plt.plot(coords[solution[0], 0], coords[solution[0], 1], 'x', markersize=10)
-
+    plt.show()
 
 
 """ Generate example solutions
 """
 NR_NODES = 20
-for sample in range(10):
-    coords, W_np = get_graph_mat(n=NR_NODES)
+for sample in range(1):
+    coords, W_np = get_graph_mat(n=NR_NODES,size=1, test=True)
     W = torch.tensor(W_np, dtype=torch.float32, requires_grad=False, device=device)
 
     solution = [random.randint(0, NR_NODES-1)]
@@ -609,7 +622,7 @@ for sample in range(10):
     random_solution = list(range(NR_NODES))
     plot_solution(coords, W, random_solution)
     plt.title('random / len = {}'.format(total_distance(random_solution, W)))
-
+    plt.show()
 
 # In[ ]:
 

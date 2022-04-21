@@ -62,10 +62,11 @@ def plot_results(routes, waypoints, home, num_vehicles):
         y.append(home.y)
         plt.plot(x, y)
     plt.plot(0, 0, 'bx', markersize=10)
+    plt.xlabel('Position (unitless)')
+    plt.ylabel('Position (unitless)')
+    plt.savefig("multi-agent2.png")
 
-
-
-    plt.show()
+    # plt.show()
 
 
 
