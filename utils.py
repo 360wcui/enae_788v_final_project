@@ -4,6 +4,9 @@ from random import randint
 from matplotlib import pyplot as plt
 from Waypoint import Waypoint
 import math
+from Node import Node
+from Edge import Edge
+
 def minimal_spanning_tree(graph, mode='Prim', starting_node=None):
     """
 
@@ -152,3 +155,48 @@ def build_distance_matrix(samples, home):
             dist = math.sqrt((waypoint_a_x - waypoint_b_x) ** 2 + (waypoint_a_y - waypoint_b_y) ** 2 )
             distance_matrix[j][i] = dist
     return distance_matrix, waypoints
+
+
+def build_graph(samples):
+    """Entry point of the program."""
+    np.random.seed(1)
+    x = np.random.rand(samples, 1) * 100 - 50
+    np.random.seed(2)
+    y = np.random.rand(samples, 1) * 100 - 50
+    id = [0, 1,   2,  3, 4, 5, 6,   7, 8,  9, 10]
+    # x = [10, -10, 10, 2, 5, 6, 7,   9, -6, 1]
+    # y = [1,  -5,  2,  5, 5, 7, 10, -3, 4, -10]
+    node_list = []
+    edge_list = []
+
+    id = 0
+    for xx, yy in zip(x, y):
+        print(xx, yy)
+        node_list.append(Node(xx, yy, id))
+        id += 1
+
+
+    # print(len(node_list))
+    for i in range(len(node_list)):
+        for j in range(len(node_list)):
+            if i is not j:
+                node0 = node_list[i]
+                node1 = node_list[j]
+                if node0.x == node1.x and node0.y == node1.y:
+                    continue
+                else:
+                    distance = math.sqrt((node0.x - node1.x) ** 2 + (node0.y - node1.y) ** 2)
+                    # print('', distance)
+
+                    edge_list.append(Edge(node0, node1, distance))
+    edge_list.sort()
+    print('=========')
+    for edge in edge_list:
+        print(edge)
+    # for node in node_list:
+    #     print(node)
+    # print('sorted', edge_list)
+
+    print('=========')
+    return edge_list
+

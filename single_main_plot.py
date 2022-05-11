@@ -47,7 +47,7 @@ def plot_results(routes, waypoints, home, num_vehicles):
             last_y = current_y
             current_x = waypoints[route_index].x
             current_y = waypoints[route_index].y
-            print_ros_command(current_x, current_y)
+            # print_ros_command(current_x, current_y)
             if last_x is not None and last_y is not None:
                 # print('haha', last_x, last_y, current_x, current_y)
                 step = np.sqrt((current_x - last_x) ** 2 + (current_y - last_y) ** 2)
@@ -91,6 +91,8 @@ def main():
     np.random.seed(2)
     y = np.random.rand(samples, 1) * 100 - 50
     best_route_distance = 999
+    print(x)
+    print(y)
     id = [0, 1,   2,  3, 4, 5, 6,   7, 8,  9, 10]
     # x = [10, -10, 10, 2, 5, 6, 7,   9, -6, 1]
     # y = [1,  -5,  2,  5, 5, 7, 10, -3, 4, -10]
@@ -99,7 +101,7 @@ def main():
         # print(xx, yy)
         waypoints.append(Waypoint(xx, yy, 50.0))
 
-    waypoints.sort()
+    # waypoints.sort()
 
     ends = [1]
     starts = [0]
@@ -126,7 +128,10 @@ def main():
     # routes = [[0, 3, 12, 13, 9, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 2, 5, 7, 6, 1, 0]] # christofides
     # routes = [[0, 3, 12, 13, 9, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 2, 5, 7, 6, 1, 0]] # christofides
     # routes = [[0, 4, 2, 1, 5, 7, 6, 18, 14, 10, 11, 8, 9, 13, 15, 17, 19, 16, 12, 3, 0]] # prob
-    routes = [[0, 3, 12, 9, 13, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 5, 7, 6, 1,  2,0]]  # rl
+    # routes = [[0, 3, 12, 9, 13, 11, 15, 17, 16, 19, 18, 14, 10, 8, 4, 5, 7, 6, 1,  2,0]]  # rl
+    routes = [[12,19]]  # rl
+
+    routes = [[7,13,2,17,1,9,11,0,4,14,5,6,12,19,8,10,18,3,15,16,7]]  # rl
 
         # routes, max_route_distance = print_solution(data, manager, routing, solution)
     home_index = ends[0]
